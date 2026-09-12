@@ -1,0 +1,160 @@
+{% extends 'core/base.html' %}
+
+{% block extra_css %}
+<style>
+    .saf-header {
+        background: linear-gradient(135deg, #fff9f2 0%, #fff4e0 100%);
+        border-bottom: 1.5px solid #f0e8d8;
+        padding: 36px 0 28px;
+        margin: -32px -32px 36px;
+        border-radius: 14px 14px 0 0;
+        text-align: center;
+    }
+    .saf-header-eyebrow {
+        font-size: 11px;
+        font-family: Arial, sans-serif;
+        font-weight: 700;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        color: #E67E22;
+        margin-bottom: 8px;
+    }
+    .saf-header-title {
+        font-size: 36px;
+        font-weight: 900;
+        font-family: 'Georgia', serif;
+        color: #1a1a1a;
+        margin-bottom: 6px;
+    }
+    .saf-header-sub {
+        font-size: 14px;
+        color: #aaa;
+        font-family: Arial, sans-serif;
+    }
+
+    .success-banner {
+        background: #e8f8ef;
+        border: 1.5px solid #b6e8c8;
+        border-radius: 10px;
+        padding: 14px 20px;
+        margin-bottom: 28px;
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        color: #1a7a40;
+        font-weight: 600;
+        text-align: center;
+    }
+
+    .saf-form-card {
+        background: #fff9f2;
+        border: 1.5px solid #f0e8d8;
+        border-radius: 14px;
+        padding: 32px;
+        max-width: 560px;
+        margin: 0 auto;
+    }
+
+    .form-group {
+        margin-bottom: 22px;
+    }
+    .form-label {
+        display: block;
+        font-size: 11px;
+        font-family: Arial, sans-serif;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        color: #888;
+        margin-bottom: 8px;
+    }
+    .form-group input[type="text"],
+    .form-group input[type="file"] {
+        width: 100%;
+        padding: 12px 14px;
+        border: 1.5px solid #f0e8d8;
+        border-radius: 8px;
+        font-size: 14px;
+        font-family: Arial, sans-serif;
+        color: #1a1a1a;
+        background: #fff;
+        outline: none;
+        box-sizing: border-box;
+    }
+    .form-group input[type="text"]:focus {
+        border-color: #E67E22;
+    }
+    .form-group input[type="file"] {
+        padding: 10px 14px;
+        color: #888;
+    }
+
+    .btn-primary {
+        display: block;
+        width: 100%;
+        background: #E67E22;
+        color: white;
+        font-family: Arial, sans-serif;
+        font-weight: 700;
+        font-size: 13px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        padding: 14px;
+        border-radius: 30px;
+        border: none;
+        cursor: pointer;
+        text-align: center;
+        box-shadow: 0 4px 20px rgba(230,126,34,0.25);
+        margin-top: 8px;
+    }
+    .btn-primary:hover { background: #d06a10; }
+
+    .back-link {
+        display: block;
+        text-align: center;
+        margin-top: 18px;
+        font-size: 13px;
+        font-family: Arial, sans-serif;
+        color: #aaa;
+        text-decoration: none;
+    }
+    .back-link:hover { color: #E67E22; }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="saf-header">
+    <div class="saf-header-eyebrow">Club Finance</div>
+    <div class="saf-header-title">SAF Application</div>
+    <div class="saf-header-sub">Student Activities Fund request form</div>
+</div>
+
+{% if already_registered %}
+<div class="success-banner">
+    Your organization is already registered. You can update your details below.
+</div>
+{% endif %}
+
+<div class="saf-form-card">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label class="form-label">Organization Name</label>
+            {{ form.organization_name }}
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">SAF Application File</label>
+            {{ form.saf_application }}
+        </div>
+
+        <button type="submit" class="btn-primary">
+            {% if already_registered %}Update Application{% else %}Submit Application{% endif %}
+        </button>
+    </form>
+
+    <a href="{% url 'funding:dashboard' %}" class="back-link">← Back to Dashboard</a>
+</div>
+
+{% endblock %}

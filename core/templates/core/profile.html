@@ -1,0 +1,64 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+
+<div style="max-width: 600px; margin: auto; font-family: Arial, sans-serif;">
+
+    <h1 style="text-align: center; margin-bottom: 20px;">User Profile</h1>
+
+    <div style="background: #f8f9fa; padding: 25px; border-radius: 12px; box-shadow: 0 3px 8px rgba(0,0,0,0.05);">
+
+        <form method="post">
+            {% csrf_token %}
+
+            <!-- Username (Editable) -->
+            <div style="margin-bottom: 15px;">
+                <strong>Username:</strong><br>
+                {{ form.username }}
+            </div>
+
+            <!-- Email (Read-only) -->
+            <div style="margin-bottom: 15px;">
+                <strong>Email:</strong><br>
+                <span style="color: #555;">{{ user.email }}</span>
+            </div>
+
+            <!-- Member Status -->
+            <div style="margin-bottom: 15px;">
+                <strong>Member Status:</strong><br>
+                {% if user.is_member %}
+                    <span style="color: green; font-weight: bold;">Member</span>
+                {% else %}
+                    <span style="color: gray;">Not a member</span>
+                {% endif %}
+            </div>
+
+            <!-- Executive Status -->
+            <div style="margin-bottom: 20px;">
+                <strong>Executive Status:</strong><br>
+                {% if user.is_executive %}
+                    <span style="color: #2c7be5; font-weight: bold;">Executive</span>
+                {% else %}
+                    <span style="color: gray;">Standard user</span>
+                {% endif %}
+            </div>
+
+            <!-- Save Button -->
+            <button type="submit"
+                    style="width: 100%; padding: 10px; background-color: #2c7be5; color: white; border: none; border-radius: 6px;">
+                Save Changes
+            </button>
+
+        </form>
+
+    </div>
+
+    <div style="text-align: center; margin-top: 20px;">
+        <a href="{% url 'home' %}" style="text-decoration: none; color: #2c7be5;">
+            Back to Home
+        </a>
+    </div>
+
+</div>
+
+{% endblock %}

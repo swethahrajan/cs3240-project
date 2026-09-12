@@ -1,0 +1,93 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+
+<div style="max-width: 900px; margin: auto;">
+
+    <!-- Header -->
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h1>{{ sheet.event.name }} Budget (Edit)</h1>
+
+        <a href="{% url 'funding:budget_dashboard' %}"
+           style="padding:8px 12px; background:#6c757d; color:white; text-decoration:none; border-radius:6px;">
+            ← Back to Dashboard
+        </a>
+    </div>
+
+    <!-- ADD SECTION BUTTON -->
+    <div style="margin:20px 0;">
+        <a href="{% url 'funding:create_section' sheet.id %}"
+           style="padding:10px 15px; background:#28a745; color:white; text-decoration:none; border-radius:6px;">
+            + Add Section
+        </a>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+
+        {% for section in sheet.sections.all %}
+            <div style="background:#fff; padding:20px; margin-bottom:20px; border-radius:10px; border:1px solid #ddd;">
+
+                <!-- Section Header -->
+                <input type="text"
+                       name="section_name_{{ section.id }}"
+                       value="{{ section.name }}"
+                       style="font-size:1.5em; font-weight:bold; border:none; width:100%; margin-bottom:10px;">
+
+                <table border="1" cellpadding="8" style="width:100%; border-collapse:collapse;">
+                    <tr style="background:#f8f9fa;">
+                        <th>Description</th>
+                        <th>Vendor</th>
+                        <th>Qty</th>
+                        <th>Unit Price</th>
+                        <th>Confirmed</th>
+                    </tr>
+
+                    {% for item in section.items.all %}
+                    <tr>
+                        <td><input type="text" name="description_{{ item.id }}" value="{{ item.description }}"></td>
+                        <td><input type="text" name="vendor_{{ item.id }}" value="{{ item.vendor }}"></td>
+                        <td><input type="number" name="quantity_{{ item.id }}" value="{{ item.quantity }}"></td>
+                        <td><input type="number" step="0.01" name="unit_price_{{ item.id }}" value="{{ item.unit_price }}"></td>
+                        <td style="text-align:center;">
+                            <input type="checkbox" name="confirmed_{{ item.id }}"
+                                   {% if item.is_confirmed %}checked{% endif %}>
+                        </td>
+                    </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="5" style="text-align:center; padding:10px;">
+                                No items yet.
+                            </td>
+                        </tr>
+                    {% endfor %}
+
+                </table>
+
+                <!-- ADD ITEM BUTTON -->
+                <div style="margin-top:10px;">
+                    <a href="{% url 'funding:create_item' section.id %}"
+                       style="padding:8px 12px; background:#007bff; color:white; text-decoration:none; border-radius:6px;">
+                        + Add Item
+                    </a>
+                </div>
+
+            </div>
+        {% empty %}
+            <p>No sections yet.</p>
+        {% endfor %}
+
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h2>Grand Total: ${{ sheet.grand_total }}</h2>
+
+            <button type="submit"
+                    style="padding:10px 15px; background:#2c7be5; color:white; border:none; border-radius:6px;">
+                Save Changes
+            </button>
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}

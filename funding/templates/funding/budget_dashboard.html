@@ -1,0 +1,73 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+
+<div style="max-width: 800px; margin: auto;">
+
+    <h1>Budget Dashboard</h1>
+
+    <!-- Organization Budget -->
+    <div style="background:#f8f9fa; padding:20px; margin-bottom:20px; border-radius:10px;">
+        <h2>Organization Budget</h2>
+
+        {% if org_budget %}
+            <p>Total Funds: ${{ org_budget.total_funds }}</p>
+        {% else %}
+            <p>No organization budget set.</p>
+        {% endif %}
+    </div>
+
+<h2 style="margin-top:30px;">Events</h2>
+
+{% if user.is_executive %}
+    <div style="margin-bottom:20px;">
+        <a href="{% url 'funding:create_event' %}"
+           style="padding:12px 18px; background:#28a745; color:white; text-decoration:none; border-radius:8px; font-weight:500;">
+            + Create Event
+        </a>
+    </div>
+{% endif %}
+
+{% for event in events %}
+    <div style="background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:20px; margin-bottom:20px; box-shadow:0 2px 6px rgba(0,0,0,0.05);">
+
+        <!-- Event Title -->
+        <h3 style="margin-bottom:10px;">{{ event.name }}</h3>
+
+        <!-- Buttons -->
+        <div style="display:flex; gap:10px; align-items:center;">
+
+            {% if event.budgetsheet %}
+                <a href="{% url 'funding:view_budget_sheet' event.budgetsheet.id %}"
+                   style="padding:8px 14px; background:#2c7be5; color:white; text-decoration:none; border-radius:6px;">
+                    View Budget Sheet
+                </a>
+
+                {% if user.is_executive %}
+                    <a href="{% url 'funding:edit_budget_sheet' event.budgetsheet.id %}"
+                       style="padding:8px 14px; background:#f59e0b; color:white; text-decoration:none; border-radius:6px;">
+                        Edit
+                    </a>
+                {% endif %}
+
+            {% else %}
+                <p style="margin:0; color:#6b7280;">No budget sheet yet.</p>
+
+                {% if user.is_executive %}
+                    <a href="{% url 'funding:create_budget_sheet' event.id %}"
+                       style="padding:8px 14px; background:#10b981; color:white; text-decoration:none; border-radius:6px;">
+                        + Create Budget Sheet
+                    </a>
+                {% endif %}
+            {% endif %}
+
+        </div>
+
+    </div>
+{% empty %}
+    <p>No events yet.</p>
+{% endfor %}
+
+</div>
+
+{% endblock %}

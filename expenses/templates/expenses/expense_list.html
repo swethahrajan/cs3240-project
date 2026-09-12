@@ -1,0 +1,65 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<style>
+    .status.pending {
+        color: orange;
+        font-weight: bold;
+    }
+    .status.confirmed {
+        color: blue;
+        font-weight: bold;
+    }
+    .status.paid {
+        color: green;
+        font-weight: bold;
+    }
+
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+
+    th {
+        background-color: #f2f2f2;
+    }
+
+    a {
+        margin-right: 5px;
+    }
+</style>
+
+<h1>Expenses Dashboard</h1>
+
+<table>
+    <tr>
+        <th>Vendor</th>
+        <th>Description</th>
+        <th>Amount</th>
+        <th>Status</th>
+        {% if user.is_executive %}
+        <th>Actions</th>
+        {% endif %}
+    </tr>
+    {% for expense in expenses %}
+    <tr>
+        <td>{{ expense.vendor.name }}</td>
+        <td>{{ expense.description }}</td>
+        <td>${{ expense.amount }}</td>
+        <td class="status {{ expense.status|lower }}">{{ expense.get_status_display }}</td>
+        {% if user.is_executive %}
+        <td>
+            <a href="/expenses/approve/{{ expense.id }}/">Approve</a>
+            <a href="/expenses/pay/{{ expense.id }}/">Mark Paid</a>
+        </td>
+        {% endif %}
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

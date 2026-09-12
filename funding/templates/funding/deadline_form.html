@@ -1,0 +1,30 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+
+<div style="max-width: 500px; margin: auto; font-family: Arial, sans-serif;">
+
+    <h1 style="text-align: center;">Add / Edit Deadline</h1>
+
+    <form method="post" style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
+        {% csrf_token %}
+
+        <div style="margin-bottom: 15px;">
+            {{ form.as_p }}
+        </div>
+
+        <button type="submit"
+                style="width: 100%; padding: 10px; background-color: #2c7be5; color: white; border: none; border-radius: 6px;">
+            Save
+        </button>
+    </form>
+
+    <div style="text-align: center; margin-top: 15px;">
+        <a href="{% url 'funding:dashboard' %}" style="text-decoration: none; color: gray;">
+            Back to Dashboard
+        </a>
+    </div>
+
+</div>
+
+{% endblock %}

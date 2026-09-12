@@ -1,0 +1,40 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<h1>Funding Sources</h1>
+
+<p><a href="{% url 'funding_sources:add_category' %}">Add New Category</a></p>
+
+{% for item in category_data %}
+    <h2>{{ item.category.name }}</h2>
+    <p>{{ item.category.description }}</p>
+    <p>Expected Cost: ${{ item.category.expected_cost }}</p>
+    <p>Total Received: ${{ item.total_received }}</p>
+
+    <a href="{% url 'funding_sources:edit_category' item.category.pk %}">Edit Category</a> |
+    <form method="post" action="{% url 'funding_sources:delete_category' item.category.pk %}" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit">Delete Category</button>
+    </form>
+    | <a href="{% url 'funding_sources:add_funding_source' item.category.pk %}">Add Funding Source</a>
+
+    <ul>
+    {% for source in item.funding_sources %}
+        <li>
+            {{ source.name }}: ${{ source.amount }}
+            | <a href="{% url 'funding_sources:edit_funding_source' source.pk %}">Edit</a>
+            | <form method="post" action="{% url 'funding_sources:delete_funding_source' source.pk %}" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit">Delete</button>
+            </form>
+        </li>
+    {% empty %}
+        <li>No funding sources yet.</li>
+    {% endfor %}
+    </ul>
+
+{% empty %}
+    <p>No expense categories yet.</p>
+{% endfor %}
+
+{% endblock %}

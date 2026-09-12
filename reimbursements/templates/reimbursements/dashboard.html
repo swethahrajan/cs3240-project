@@ -1,0 +1,24 @@
+{% extends 'core/base.html' %}
+{% block content %}
+<h1>Receipt Reimbursements</h1>
+
+<h2>Submit Reimbursement</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Submit</button>
+</form>
+
+<h2>Submitted Requests</h2>
+{% if reimbursements %}
+<ul>
+{% for reimbursement in reimbursements %}
+    <li>
+        {{ reimbursement.title }} - ${{ reimbursement.amount }} ({{ reimbursement.submitted_at|date:"Y-m-d" }})
+    </li>
+{% endfor %}
+</ul>
+{% else %}
+<p>No reimbursements submitted yet.</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,489 @@
+{% extends 'core/base.html' %}
+{% load socialaccount %}
+
+{% block extra_css %}
+<style>
+    .hero {
+        position: relative;
+        overflow: hidden;
+        background: #fffdf8;
+        min-height: 72vh;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 60px 48px 80px;
+    }
+    .blob {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(60px);
+        opacity: 0.35;
+        pointer-events: none;
+        z-index: 0;
+    }
+    .hero-left { z-index: 10; max-width: 480px; }
+    .hero-eyebrow {
+        font-size: 11px;
+        font-family: Arial, sans-serif;
+        font-weight: 700;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        color: #E67E22;
+        margin-bottom: 14px;
+    }
+    .hero-title {
+        font-size: 60px;
+        font-weight: 900;
+        line-height: 1.05;
+        color: #1a1a1a;
+        font-family: 'Georgia', serif;
+        margin-bottom: 20px;
+    }
+    .hero-title span { color: #E67E22; }
+    .hero-subtitle {
+        font-size: 18px;
+        color: #777;
+        font-family: 'Georgia', serif;
+        font-style: italic;
+        line-height: 1.6;
+        margin-bottom: 36px;
+    }
+    .hero-cta {
+        display: inline-block;
+        background: #E67E22;
+        color: white;
+        font-family: Arial, sans-serif;
+        font-weight: 700;
+        font-size: 13px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        padding: 14px 32px;
+        border-radius: 30px;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+        box-shadow: 0 4px 20px rgba(230,126,34,0.3);
+        margin-right: 12px;
+    }
+    .hero-cta-secondary {
+        display: inline-block;
+        background: transparent;
+        color: #E67E22;
+        font-family: Arial, sans-serif;
+        font-weight: 700;
+        font-size: 13px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        padding: 14px 32px;
+        border-radius: 30px;
+        text-decoration: none;
+        border: 2px solid #E67E22;
+        cursor: pointer;
+    }
+    .circles-wrap {
+        position: relative;
+        width: 340px;
+        height: 360px;
+        z-index: 10;
+        flex-shrink: 0;
+    }
+    .circ {
+        position: absolute;
+        border-radius: 50%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 10px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.10);
+        font-family: Arial, sans-serif;
+        border: 2px solid rgba(255,255,255,0.8);
+    }
+    .circ-label {
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        margin-top: 5px;
+    }
+    .divider {
+        height: 3px;
+        background: linear-gradient(90deg, #E74C3C, #E67E22, #F5A623, #27AE60);
+        opacity: 0.5;
+    }
+
+    /* Dashboard section */
+    .dashboard-section { background: #fff9f2; padding: 60px 48px; }
+    .dashboard-section-title {
+        font-size: 28px;
+        font-family: 'Georgia', serif;
+        font-weight: 900;
+        color: #1a1a1a;
+        margin-bottom: 6px;
+    }
+    .dashboard-section-sub {
+        font-size: 14px;
+        color: #aaa;
+        font-family: Arial, sans-serif;
+        margin-bottom: 36px;
+    }
+    .section-label {
+        font-size: 11px;
+        font-family: Arial, sans-serif;
+        font-weight: 700;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        color: #E67E22;
+        margin-bottom: 16px;
+        margin-top: 40px;
+    }
+    .section-label:first-child { margin-top: 0; }
+
+    /* Stat cards */
+    .stat-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        margin-bottom: 8px;
+    }
+    .stat-card {
+        background: #fff;
+        border: 1.5px solid #f0e8d8;
+        border-top: 3px solid #E67E22;
+        border-radius: 12px;
+        padding: 22px 18px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+    }
+    .stat-card.red { border-top-color: #E74C3C; }
+    .stat-card.yellow { border-top-color: #F5A623; }
+    .stat-card.green { border-top-color: #27AE60; }
+    .stat-card.blue { border-top-color: #2980B9; }
+    .stat-label {
+        font-size: 10px;
+        font-family: Arial, sans-serif;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        color: #aaa;
+        margin-bottom: 8px;
+    }
+    .stat-value {
+        font-size: 28px;
+        font-weight: 900;
+        font-family: 'Georgia', serif;
+        color: #1a1a1a;
+    }
+    .stat-sub { font-size: 11px; color: #bbb; font-family: Arial, sans-serif; margin-top: 4px; }
+
+    /* Module cards */
+    .module-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+    }
+    .module-card {
+        background: #fff;
+        border: 1.5px solid #f0e8d8;
+        border-radius: 14px;
+        padding: 28px 24px;
+        text-decoration: none;
+        display: block;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+        transition: box-shadow 0.2s, transform 0.2s;
+    }
+    .module-card:hover {
+        box-shadow: 0 8px 28px rgba(230,126,34,0.15);
+        transform: translateY(-2px);
+    }
+    .module-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 14px;
+        font-size: 22px;
+    }
+    .module-title {
+        font-size: 16px;
+        font-weight: 700;
+        font-family: 'Georgia', serif;
+        color: #1a1a1a;
+        margin-bottom: 6px;
+    }
+    .module-desc {
+        font-size: 13px;
+        color: #999;
+        font-family: Arial, sans-serif;
+        line-height: 1.5;
+    }
+
+    /* Activity & deadlines */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .activity-list { display: flex; flex-direction: column; gap: 10px; }
+    .activity-item {
+        background: #fff;
+        border: 1.5px solid #f0e8d8;
+        border-radius: 10px;
+        padding: 14px 18px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        font-family: Arial, sans-serif;
+        box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+    }
+    .activity-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+    .activity-desc { font-size: 13px; color: #555; flex: 1; }
+    .activity-desc strong { color: #1a1a1a; }
+    .activity-time { font-size: 11px; color: #ccc; }
+    .activity-badge {
+        font-size: 10px;
+        font-weight: 700;
+        padding: 3px 10px;
+        border-radius: 20px;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+    }
+    .badge-pending { background: #fff4e0; color: #c87800; }
+    .badge-confirmed { background: #e8f8ef; color: #1a7a40; }
+    .badge-paid { background: #fdecea; color: #b02a1c; }
+
+    .deadline-item {
+        background: #fff;
+        border: 1.5px solid #f0e8d8;
+        border-left: 4px solid #E67E22;
+        border-radius: 10px;
+        padding: 14px 18px;
+        margin-bottom: 10px;
+        font-family: Arial, sans-serif;
+        box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+    }
+    .deadline-title { font-size: 14px; font-weight: 700; color: #1a1a1a; }
+    .deadline-date { font-size: 12px; color: #E67E22; margin-top: 3px; }
+    .deadline-desc { font-size: 12px; color: #aaa; margin-top: 2px; }
+
+    .empty-state {
+        font-size: 13px;
+        color: #ccc;
+        font-family: Arial, sans-serif;
+        padding: 20px 0;
+        text-align: center;
+    }
+</style>
+{% endblock %}
+
+{% block full_page %}
+
+<!-- Hero -->
+<div class="hero">
+    <div class="blob" style="width:400px;height:400px;background:#F5A623;top:-100px;right:-80px;"></div>
+    <div class="blob" style="width:300px;height:300px;background:#E74C3C;bottom:-80px;right:200px;"></div>
+    <div class="blob" style="width:250px;height:250px;background:#27AE60;top:50px;right:300px;"></div>
+
+    <div class="hero-left">
+        <div class="hero-eyebrow">UVA Club Finance</div>
+        <div class="hero-title">Welcome<br>to <span>UCF!</span></div>
+        <div class="hero-subtitle">Select a tab on the navigation menu above to get started. Manage funding, expenses, and reimbursements all in one place.</div>
+        {% if not user.is_authenticated %}
+            <a href="{% provider_login_url 'google' %}" class="hero-cta">Get Started</a>
+        {% else %}
+            <a href="#dashboard" class="hero-cta">View Dashboard</a>
+            <a href="{% url 'funding:dashboard' %}" class="hero-cta-secondary">Go to Funding</a>
+        {% endif %}
+    </div>
+
+    <div class="circles-wrap">
+        <div class="circ" style="width:115px;height:115px;background:#fff4e0;top:0;left:20px;">
+            <svg width="46" height="46" viewBox="0 0 46 46" fill="none">
+                <circle cx="23" cy="14" r="9" fill="#F5A623" opacity="0.85"/>
+                <ellipse cx="23" cy="36" rx="15" ry="9" fill="#F5A623" opacity="0.85"/>
+                <rect x="12" y="20" width="4" height="3" rx="1" fill="#fff" opacity="0.9"/>
+                <rect x="21" y="20" width="4" height="3" rx="1" fill="#fff" opacity="0.9"/>
+                <rect x="30" y="20" width="4" height="3" rx="1" fill="#fff" opacity="0.9"/>
+            </svg>
+            <span class="circ-label" style="color:#c87800;">Accountant</span>
+        </div>
+        <div class="circ" style="width:125px;height:125px;background:#fdecea;top:5px;right:0;">
+            <svg width="52" height="52" viewBox="0 0 52 52" fill="none">
+                <ellipse cx="26" cy="38" rx="17" ry="6" fill="#E74C3C" opacity="0.8"/>
+                <rect x="14" y="22" width="24" height="16" rx="3" fill="#E74C3C" opacity="0.85"/>
+                <rect x="10" y="18" width="32" height="5" rx="2" fill="#E74C3C" opacity="0.9"/>
+                <ellipse cx="26" cy="20" rx="12" ry="4" fill="#E74C3C" opacity="0.75"/>
+                <path d="M38 18 Q45 9 41 5 Q48 8 43 17 Q47 12 44 20" fill="#E74C3C" opacity="0.8"/>
+            </svg>
+            <span class="circ-label" style="color:#b02a1c;">Cavaliers</span>
+        </div>
+        <div class="circ" style="width:105px;height:105px;background:#fff0e8;top:135px;left:0;">
+            <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
+                <rect x="7" y="24" width="30" height="14" rx="1" fill="#E67E22" opacity="0.85"/>
+                <path d="M5 24 Q22 6 39 24Z" fill="#E67E22" opacity="0.85"/>
+                <rect x="15" y="30" width="4" height="8" fill="#fff" opacity="0.7"/>
+                <rect x="25" y="30" width="4" height="8" fill="#fff" opacity="0.7"/>
+                <circle cx="22" cy="16" r="4" fill="#fff" opacity="0.6"/>
+            </svg>
+            <span class="circ-label" style="color:#b85a00;">UVA</span>
+        </div>
+        <div class="circ" style="width:110px;height:110px;background:#e8f8ef;top:145px;right:10px;">
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                <circle cx="24" cy="24" r="18" fill="#27AE60" opacity="0.15"/>
+                <circle cx="24" cy="24" r="18" stroke="#27AE60" stroke-width="2.5" opacity="0.8"/>
+                <polyline points="13,24 21,32 35,16" stroke="#27AE60" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            </svg>
+            <span class="circ-label" style="color:#1a7a40;">Approved</span>
+        </div>
+        <div class="circ" style="width:80px;height:80px;background:#fff4e0;bottom:0;left:65px;">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                <rect x="4" y="8" width="24" height="18" rx="3" fill="#F5A623" opacity="0.2"/>
+                <rect x="4" y="8" width="24" height="18" rx="3" stroke="#F5A623" stroke-width="2" fill="none"/>
+                <line x1="4" y1="14" x2="28" y2="14" stroke="#F5A623" stroke-width="2"/>
+                <line x1="10" y1="20" x2="15" y2="20" stroke="#F5A623" stroke-width="1.5"/>
+                <line x1="18" y1="20" x2="22" y2="20" stroke="#F5A623" stroke-width="1.5"/>
+            </svg>
+            <span class="circ-label" style="color:#c87800;font-size:9px;">Budget</span>
+        </div>
+    </div>
+</div>
+
+<div class="divider"></div>
+
+{% if user.is_authenticated %}
+<div class="dashboard-section" id="dashboard">
+    <div class="dashboard-section-title">Your Dashboard</div>
+    <div class="dashboard-section-sub">A snapshot of your club's financial activity</div>
+
+    <!-- Stats -->
+    <div class="section-label">Overview</div>
+    <div class="stat-grid">
+        <div class="stat-card red">
+            <div class="stat-label">Total Expenses</div>
+            <div class="stat-value">${{ total_expenses|floatformat:2 }}</div>
+            <div class="stat-sub">All time</div>
+        </div>
+        <div class="stat-card yellow">
+            <div class="stat-label">Pending</div>
+            <div class="stat-value">{{ pending_expenses }}</div>
+            <div class="stat-sub">Awaiting approval</div>
+        </div>
+        <div class="stat-card green">
+            <div class="stat-label">Confirmed</div>
+            <div class="stat-value">{{ confirmed_expenses }}</div>
+            <div class="stat-sub">Expenses cleared</div>
+        </div>
+        <div class="stat-card blue">
+            <div class="stat-label">Reimbursements</div>
+            <div class="stat-value">${{ total_reimbursements|floatformat:2 }}</div>
+            <div class="stat-sub">Total submitted</div>
+        </div>
+    </div>
+
+    <!-- Module quick access -->
+    <div class="section-label">Quick Access</div>
+    <div class="module-grid">
+        <a href="{% url 'funding:dashboard' %}" class="module-card">
+            <div class="module-icon" style="background:#fff4e0;">💰</div>
+            <div class="module-title">Funding</div>
+            <div class="module-desc">Manage deadlines, budgets, and SAF applications for your organization.</div>
+        </a>
+        <a href="{% url 'reimbursements:dashboard' %}" class="module-card">
+            <div class="module-icon" style="background:#fdecea;">🧾</div>
+            <div class="module-title">Reimbursements</div>
+            <div class="module-desc">Submit and track reimbursement requests for club expenses.</div>
+        </a>
+        <a href="{% url 'expense_list' %}" class="module-card">
+            <div class="module-icon" style="background:#e8f8ef;">📊</div>
+            <div class="module-title">Expenses</div>
+            <div class="module-desc">View and manage all club expenses, approvals, and payments.</div>
+        </a>
+        <a href="{% url 'funding_sources:dashboard' %}" class="module-card">
+            <div class="module-icon" style="background:#fff0e8;">🏦</div>
+            <div class="module-title">Funding Sources</div>
+            <div class="module-desc">Track funding categories and sources available to your club.</div>
+        </a>
+        <a href="{% url 'messaging:inbox' %}" class="module-card">
+            <div class="module-icon" style="background:#f0e8ff;">✉️</div>
+            <div class="module-title">Messages</div>
+            <div class="module-desc">Communicate with club members and executives directly.</div>
+        </a>
+        <a href="{% url 'profile' %}" class="module-card">
+            <div class="module-icon" style="background:#e8f4ff;">👤</div>
+            <div class="module-title">Profile</div>
+            <div class="module-desc">View and update your account information and role.</div>
+        </a>
+    </div>
+
+    <!-- Recent activity & deadlines -->
+    <div class="section-label">Recent Activity & Upcoming Deadlines</div>
+    <div class="two-col">
+
+        <!-- Recent expenses -->
+        <div>
+            <div style="font-size:13px;font-family:Arial,sans-serif;font-weight:700;color:#888;margin-bottom:12px;text-transform:uppercase;letter-spacing:1px;">Latest Expenses</div>
+            <div class="activity-list">
+                {% for expense in recent_expenses %}
+                <div class="activity-item">
+                    {% if expense.status == 'pending' %}
+                        <div class="activity-dot" style="background:#F5A623;"></div>
+                    {% elif expense.status == 'confirmed' %}
+                        <div class="activity-dot" style="background:#27AE60;"></div>
+                    {% else %}
+                        <div class="activity-dot" style="background:#E74C3C;"></div>
+                    {% endif %}
+                    <div class="activity-desc">
+                        <strong>{{ expense.title }}</strong> — ${{ expense.amount }}
+                    </div>
+                    <span class="activity-badge badge-{{ expense.status }}">{{ expense.get_status_display }}</span>
+                </div>
+                {% empty %}
+                <div class="empty-state">No expenses yet.</div>
+                {% endfor %}
+            </div>
+
+            <div style="font-size:13px;font-family:Arial,sans-serif;font-weight:700;color:#888;margin:20px 0 12px;text-transform:uppercase;letter-spacing:1px;">Latest Reimbursements</div>
+            <div class="activity-list">
+                {% for r in recent_reimbursements %}
+                <div class="activity-item">
+                    <div class="activity-dot" style="background:#2980B9;"></div>
+                    <div class="activity-desc">
+                        <strong>{{ r.title }}</strong> — ${{ r.amount }}
+                    </div>
+                    <div class="activity-time">{{ r.submitted_at|timesince }} ago</div>
+                </div>
+                {% empty %}
+                <div class="empty-state">No reimbursements yet.</div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Deadlines & events -->
+        <div>
+            <div style="font-size:13px;font-family:Arial,sans-serif;font-weight:700;color:#888;margin-bottom:12px;text-transform:uppercase;letter-spacing:1px;">Upcoming Deadlines</div>
+            {% for deadline in upcoming_deadlines %}
+            <div class="deadline-item">
+                <div class="deadline-title">{{ deadline.title }}</div>
+                <div class="deadline-date">Due {{ deadline.deadline_date }}</div>
+                {% if deadline.description %}
+                <div class="deadline-desc">{{ deadline.description }}</div>
+                {% endif %}
+            </div>
+            {% empty %}
+            <div class="empty-state">No upcoming deadlines.</div>
+            {% endfor %}
+
+            <div style="font-size:13px;font-family:Arial,sans-serif;font-weight:700;color:#888;margin:20px 0 12px;text-transform:uppercase;letter-spacing:1px;">Upcoming Events</div>
+            {% for event in upcoming_events %}
+            <div class="deadline-item" style="border-left-color:#27AE60;">
+                <div class="deadline-title">{{ event.name }}</div>
+                <div class="deadline-date" style="color:#27AE60;">{{ event.date }}</div>
+            </div>
+            {% empty %}
+            <div class="empty-state">No upcoming events.</div>
+            {% endfor %}
+        </div>
+
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,117 @@
+{% load socialaccount %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>UVA Club Finance</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Georgia', serif; background: #fffdf8; min-height: 100vh; }
+
+        nav {
+            background: #fffdf8;
+            padding: 18px 48px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1.5px solid #f0e8d8;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .nav-logo {
+            font-size: 24px;
+            font-weight: 900;
+            color: #E67E22;
+            letter-spacing: 3px;
+            font-family: 'Georgia', serif;
+            text-decoration: none;
+        }
+        .nav-links { display: flex; gap: 28px; align-items: center; }
+        .nav-links a {
+            color: #555;
+            text-decoration: none;
+            font-size: 13px;
+            font-family: Arial, sans-serif;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+        .nav-links a:hover { color: #E67E22; }
+        .nav-right { display: flex; align-items: center; gap: 14px; font-family: Arial, sans-serif; }
+        .nav-user { color: #888; font-size: 13px; }
+        .logout-btn {
+            background: #E74C3C;
+            color: white;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        .login-btn {
+            padding: 8px 18px;
+            background: #E67E22;
+            color: white;
+            text-decoration: none;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            font-family: Arial, sans-serif;
+        }
+
+        .page-content {
+            max-width: 1100px;
+            margin: 36px auto;
+            padding: 32px;
+            background: white;
+            border-radius: 14px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            border: 1.5px solid #f0e8d8;
+        }
+
+       </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+<nav>
+    <div style="display:flex;align-items:center;gap:36px;">
+        <a href="{% url 'home' %}" class="nav-logo">UCF</a>
+        {% if user.is_authenticated %}
+        <div class="nav-links">
+            <a href="{% url 'funding:dashboard' %}">Funding</a>
+            <a href="{% url 'reimbursements:dashboard' %}">Reimbursements</a>
+            <a href="{% url 'funding_sources:dashboard' %}">Funding Sources</a>
+            <a href="{% url 'messaging:inbox' %}">Messages</a>
+            <a href="{% url 'profile' %}">Profile</a>
+            <a href="{% url 'expense_list' %}">Expenses</a>
+        </div>
+        {% endif %}
+    </div>
+    <div class="nav-right">
+        {% if user.is_authenticated %}
+            <span class="nav-user">{{ user.username }}</span>
+            <form method="post" action="{% url 'account_logout' %}" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" class="logout-btn">Logout</button>
+            </form>
+        {% else %}
+            <a href="{% provider_login_url 'google' %}" class="login-btn">Login with Google</a>
+        {% endif %}
+    </div>
+</nav>
+
+{% block full_page %}
+<div class="page-content">
+    {% block content %}{% endblock %}
+</div>
+{% endblock %}
+
+</body>
+</html>

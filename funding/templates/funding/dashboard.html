@@ -1,0 +1,288 @@
+{% extends 'core/base.html' %}
+
+{% block extra_css %}
+<style>
+    .funding-header {
+        background: linear-gradient(135deg, #fff9f2 0%, #fff4e0 100%);
+        border-bottom: 1.5px solid #f0e8d8;
+        padding: 36px 0 28px;
+        margin: -32px -32px 32px;
+        border-radius: 14px 14px 0 0;
+        text-align: center;
+    }
+    .funding-header-eyebrow {
+        font-size: 11px;
+        font-family: Arial, sans-serif;
+        font-weight: 700;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        color: #E67E22;
+        margin-bottom: 8px;
+    }
+    .funding-header-title {
+        font-size: 36px;
+        font-weight: 900;
+        font-family: 'Georgia', serif;
+        color: #1a1a1a;
+        margin-bottom: 6px;
+    }
+    .funding-header-sub {
+        font-size: 14px;
+        color: #aaa;
+        font-family: Arial, sans-serif;
+    }
+
+    .section-label {
+        font-size: 11px;
+        font-family: Arial, sans-serif;
+        font-weight: 700;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        color: #E67E22;
+        margin-bottom: 16px;
+        margin-top: 36px;
+    }
+    .section-label:first-of-type { margin-top: 0; }
+
+    .stat-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+    }
+    .stat-card {
+        background: #fff9f2;
+        border: 1.5px solid #f0e8d8;
+        border-top: 3px solid #E67E22;
+        border-radius: 12px;
+        padding: 20px 18px;
+    }
+    .stat-card.red { border-top-color: #E74C3C; }
+    .stat-card.green { border-top-color: #27AE60; }
+    .stat-label-sm {
+        font-size: 10px;
+        font-family: Arial, sans-serif;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        color: #aaa;
+        margin-bottom: 8px;
+    }
+    .stat-value {
+        font-size: 26px;
+        font-weight: 900;
+        font-family: 'Georgia', serif;
+        color: #1a1a1a;
+    }
+    .stat-sub { font-size: 11px; color: #bbb; font-family: Arial, sans-serif; margin-top: 3px; }
+
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 4px; }
+
+    /* Deadline cards */
+    .deadline-card {
+        background: #fff9f2;
+        border: 1.5px solid #f0e8d8;
+        border-left: 4px solid #E67E22;
+        border-radius: 10px;
+        padding: 14px 18px;
+        margin-bottom: 10px;
+        font-family: Arial, sans-serif;
+    }
+    .deadline-title { font-size: 14px; font-weight: 700; color: #1a1a1a; }
+    .deadline-date { font-size: 12px; color: #E67E22; margin-top: 3px; }
+    .deadline-desc { font-size: 12px; color: #aaa; margin-top: 2px; }
+
+    .reminder-badge {
+        display: inline-block;
+        background: #fff4e0;
+        color: #c87800;
+        font-size: 10px;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 10px;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        margin-top: 4px;
+    }
+
+    /* Event cards */
+    .event-card {
+        background: #fff9f2;
+        border: 1.5px solid #f0e8d8;
+        border-radius: 12px;
+        padding: 18px 20px;
+        margin-bottom: 12px;
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .event-name { font-size: 15px; font-weight: 700; color: #1a1a1a; }
+    .event-date { font-size: 12px; color: #aaa; margin-top: 3px; }
+    .event-link {
+        font-size: 12px;
+        font-weight: 700;
+        color: #E67E22;
+        text-decoration: none;
+        border: 1.5px solid #E67E22;
+        padding: 5px 14px;
+        border-radius: 20px;
+        font-family: Arial, sans-serif;
+    }
+
+    /* Buttons */
+    .btn-primary {
+        display: inline-block;
+        background: #E67E22;
+        color: white;
+        font-family: Arial, sans-serif;
+        font-weight: 700;
+        font-size: 12px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        padding: 10px 22px;
+        border-radius: 20px;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+        margin-right: 8px;
+        margin-bottom: 8px;
+    }
+    .btn-secondary {
+        display: inline-block;
+        background: transparent;
+        color: #E67E22;
+        font-family: Arial, sans-serif;
+        font-weight: 700;
+        font-size: 12px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        padding: 10px 22px;
+        border-radius: 20px;
+        text-decoration: none;
+        border: 1.5px solid #E67E22;
+        cursor: pointer;
+        margin-right: 8px;
+        margin-bottom: 8px;
+    }
+
+    .empty-state {
+        font-size: 13px;
+        color: #ccc;
+        font-family: Arial, sans-serif;
+        padding: 16px 0;
+        text-align: center;
+    }
+
+    /* SAF section */
+    .saf-card {
+        background: #fff9f2;
+        border: 1.5px solid #f0e8d8;
+        border-radius: 12px;
+        padding: 24px;
+        font-family: Arial, sans-serif;
+    }
+    .saf-title { font-size: 16px; font-weight: 700; color: #1a1a1a; margin-bottom: 6px; font-family: 'Georgia', serif; }
+    .saf-desc { font-size: 13px; color: #999; margin-bottom: 16px; line-height: 1.5; }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="funding-header">
+    <div class="funding-header-eyebrow">Club Finance</div>
+    <div class="funding-header-title">Funding Dashboard</div>
+    <div class="funding-header-sub">
+        {% if org_profile %}{{ org_profile.organization_name }}{% else %}Manage your organization's funding{% endif %}
+    </div>
+</div>
+
+<!-- Stats -->
+<div class="section-label">Overview</div>
+<div class="stat-grid">
+    <div class="stat-card">
+        <div class="stat-label-sm">Total Funding Sources</div>
+        <div class="stat-value">${{ total_funding|floatformat:2 }}</div>
+        <div class="stat-sub">Across all categories</div>
+    </div>
+    <div class="stat-card red">
+        <div class="stat-label-sm">Upcoming Deadlines</div>
+        <div class="stat-value">{{ deadlines.count }}</div>
+        <div class="stat-sub">Requiring attention</div>
+    </div>
+    <div class="stat-card green">
+        <div class="stat-label-sm">Total Events</div>
+        <div class="stat-value">{{ events.count }}</div>
+        <div class="stat-sub">In your organization</div>
+    </div>
+</div>
+
+<!-- Deadlines & SAF -->
+<div class="section-label">Deadlines & Funding Request</div>
+<div class="two-col">
+    <div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+            <span style="font-size:13px;font-family:Arial,sans-serif;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:1px;">Upcoming Deadlines</span>
+            {% if user.is_executive %}
+            <a href="{% url 'funding:add_deadline' %}" class="btn-primary" style="margin:0;padding:6px 14px;font-size:11px;">+ Add</a>
+            {% endif %}
+        </div>
+        {% for deadline in deadlines %}
+        <div class="deadline-card">
+            <div class="deadline-title">{{ deadline.title }}</div>
+            <div class="deadline-date">Due {{ deadline.deadline_date }}</div>
+            {% if deadline.description %}<div class="deadline-desc">{{ deadline.description }}</div>{% endif %}
+            {% if deadline in reminders %}<span class="reminder-badge">Reminder</span>{% endif %}
+        </div>
+        {% empty %}
+        <div class="empty-state">No upcoming deadlines.</div>
+        {% endfor %}
+    </div>
+
+    <div>
+        <div class="saf-card">
+            <div class="saf-title">SAF Application</div>
+            <div class="saf-desc">Submit or update your Student Activities Fund application. Your SAF application is required to access club funding each semester.</div>
+            <a href="{% url 'funding:saf_form' %}" class="btn-primary">
+                {% if org_profile %}Update SAF Form{% else %}Submit SAF Form{% endif %}
+            </a>
+            {% if org_profile and org_profile.saf_application %}
+            <a href="{{ org_profile.saf_application.url }}" class="btn-secondary" target="_blank">View Current Application</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Budget & Events -->
+<div class="section-label">Budget & Events</div>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+    <span style="font-size:13px;font-family:Arial,sans-serif;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:1px;">Your Events</span>
+    {% if user.is_executive %}
+    <a href="{% url 'funding:create_event' %}" class="btn-primary" style="margin:0;">+ New Event</a>
+    {% endif %}
+</div>
+
+{% for event in events %}
+<div class="event-card">
+    <div>
+        <div class="event-name">{{ event.name }}</div>
+        <div class="event-date">{{ event.date }}</div>
+    </div>
+    {% for sheet in sheets %}
+        {% if sheet.event == event %}
+        <a href="{% url 'funding:view_budget_sheet' sheet.id %}" class="event-link">View Budget</a>
+        {% endif %}
+    {% endfor %}
+</div>
+{% empty %}
+<div class="empty-state">No events yet.{% if user.is_executive %} Create one above to get started.{% endif %}</div>
+{% endfor %}
+
+{% if org_budget %}
+<div style="margin-top:20px;" class="deadline-card" style="border-left-color:#27AE60;">
+    <div class="deadline-title">Organization Budget</div>
+    <div style="font-size:22px;font-weight:900;font-family:'Georgia',serif;color:#1a1a1a;margin-top:6px;">${{ org_budget.total_funds|floatformat:2 }}</div>
+    <div style="font-size:12px;color:#aaa;font-family:Arial,sans-serif;margin-top:3px;">Total available funds</div>
+</div>
+{% endif %}
+
+{% endblock %}

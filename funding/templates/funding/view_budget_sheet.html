@@ -1,0 +1,74 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+
+<div style="max-width: 800px; margin: auto;">
+
+    <!-- Header -->
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+
+        <h1>{{ sheet.event.name }} Budget</h1>
+
+        <!-- BACK BUTTON -->
+        <a href="{% url 'funding:budget_dashboard' %}"
+           style="padding:8px 12px; background:#6c757d; color:white; text-decoration:none; border-radius:6px;">
+            ← Back to Dashboard
+        </a>
+
+        <a href="{% url 'funding:export_budget_pdf' sheet.id %}"
+           style="padding:8px 12px; background:#28a745; color:white; text-decoration:none; border-radius:6px;">
+            Export PDF
+        </a>
+
+        {% if user.is_executive %}
+            <a href="{% url 'funding:edit_budget_sheet' sheet.id %}"
+               style="padding:8px 12px; background-color:#2c7be5; color:white; text-decoration:none; border-radius:6px;">
+                Edit Sheet
+            </a>
+        {% endif %}
+
+    </div>
+
+    <!-- Sections -->
+    {% for section in sheet.sections.all %}
+        <div style="background:#fff; padding:20px; margin-bottom:20px; border-radius:10px; border:1px solid #ddd;">
+
+            <h2>{{ section.name }}</h2>
+
+            <table border="1" cellpadding="8" style="width:100%; border-collapse:collapse;">
+                <tr style="background:#f8f9fa;">
+                    <th>Description</th>
+                    <th>Vendor</th>
+                    <th>Qty</th>
+                    <th>Unit Price</th>
+                    <th>Total</th>
+                    <th>Confirmed</th>
+                </tr>
+
+                {% for item in section.items.all %}
+                <tr>
+                    <td>{{ item.description }}</td>
+                    <td>{{ item.vendor }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>${{ item.unit_price }}</td>
+                    <td>${{ item.total }}</td>
+                    <td>{{ item.is_confirmed|yesno:"Yes,No" }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+
+            <p style="margin-top:10px;">
+                <strong>Section Total: ${{ section.total_cost }}</strong>
+            </p>
+
+        </div>
+    {% endfor %}
+
+    <!-- Grand Total -->
+    <div style="background:#f8f9fa; padding:15px; border-radius:10px;">
+        <h2>Grand Total: ${{ sheet.grand_total }}</h2>
+    </div>
+
+</div>
+
+{% endblock %}
